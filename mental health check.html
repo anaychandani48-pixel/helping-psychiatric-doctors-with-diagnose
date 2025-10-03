@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Psychiatric Diagnostic Helper</title>
+<style>
+
+:root{
+--bg-1: linear-gradient(135deg,#0f2027 0%, #203a43 50%, #2c5364 100%);
+--card-grad: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+--accent: #ffd166;
+--muted: rgba(255,255,255,0.8);
+--glass: rgba(255,255,255,0.06);
+font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+html,body{height:100%;margin:0;background:var(--bg-1);color:var(--muted);}
+.container{max-width:1000px;margin:32px auto;padding:20px}
+.center-card{background:var(--card-grad);backdrop-filter: blur(6px);border-radius:18px;padding:28px;box-shadow: 0 8px 30px rgba(2,6,23,0.6);}
+
+header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+header h1{margin:0;font-size:22px;color:white;letter-spacing:0.4px}
+header p{margin:0;color:rgba(255,255,255,0.75)}
+
+.hero{display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:center}
+.hero .left{padding:12px}
+.logo{width:84px;height:84px;border-radius:14px;background:linear-gradient(135deg,#ffd166,#f38181);display:flex;align-items:center;justify-content:center;font-weight:800;color:#243b55}
+.login-card{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));}
+.big-btn{display:block;width:100%;padding:12px;border-radius:10px;border:0;margin-bottom:10px;font-weight:600;cursor:pointer}
+.google{background:#fff;color:#222}
+.name-sign{background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted)}
+.small{font-size:13px;color:rgba(255,255,255,0.7);}
+
+.signup-form{display:none;padding:14px;border-radius:12px;margin-top:12px}
+.input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--muted);margin-bottom:10px}
+
+     
+.disclaimer{padding:16px;border-radius:12px;background:linear-gradient(90deg, rgba(255,209,102,0.06), rgba(243,129,129,0.03));color:rgba(255,255,255,0.95);font-weight:600}
+.questions{margin-top:16px}
+.section-title{margin-top:18px;margin-bottom:8px;font-weight:700;color:#fff}
+.q-card{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:var(--glass);margin-bottom:8px}
+.q-text{max-width:78%}
+.btns{display:flex;gap:8px}
+.yes{padding:8px 12px;border-radius:8px;border:0;cursor:pointer;background:rgba(124,197,255,0.12)}
+.no{padding:8px 12px;border-radius:8px;border:0;cursor:pointer;background:rgba(255,124,124,0.06)}
+.active-yes{outline:3px solid rgba(124,197,255,0.12);background:rgba(124,197,255,0.18)}
+.active-no{outline:3px solid rgba(255,124,124,0.08);background:rgba(255,124,124,0.12)}
+
+.actions{display:flex;gap:10px;margin-top:18px}
+.submit{background:linear-gradient(90deg,#6dd5ed,#2193b0);padding:12px;border-radius:10px;border:0;color:#04353b;font-weight:700;cursor:pointer}
+.reset{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;color:var(--muted);cursor:pointer}
+
+.result{margin-top:18px;padding:16px;border-radius:12px;background:linear-gradient(90deg, rgba(10,10,10,0.15), rgba(255,255,255,0.02));}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);margin:6px 6px 0 0;color:var(--muted)}
+
+footer{margin-top:20px;font-size:13px;color:rgba(255,255,255,0.6)}
+
+/* responsive */
+@media(max-width:900px){
+.hero{grid-template-columns:1fr}
+.logo{width:64px;height:64px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="center-card">
+<header>
+<div class="logo">PD</div>
+<div>
+<h1>Psychiatric Diagnostic Helper</h1>
+<p>Decorative demo tool — for psychiatric doctors' preliminary support</p>
+</div>
+</header>
+
+<!-- LOGIN / SIGNUP -->
+<div class="hero">
+<div class="left">
+<h2 style="color:white;margin-top:6px">Welcome</h2>
+<p class="small">This site is designed to help psychiatric doctors by collecting structured Yes/No answers and offering suggested diagnoses. It is not a replacement for clinical judgement.</p>
+
+<div id="loginView" class="login-card" style="margin-top:12px">
+<h3 style="margin:0 0 8px 0;color:white">Sign up / Login</h3>
+<button id="googleBtn" class="big-btn google">Sign in with Google</button>
+<button id="nameBtn" class="big-btn name-sign">Sign up with name</button>
+
+<div id="nameForm" class="signup-form">
+<input id="displayName" class="input" placeholder="Your full name" />
+<input id="profession" class="input" placeholder="Your profession / hospital (optional)" />
+<div style="display:flex;gap:8px">
+<button id="createAccount" class="big-btn google" style="flex:1">Create account</button>
+<button id="cancelCreate" class="big-btn name-sign" style="flex:1">Cancel</button>
+</div>
+</div>
+
+<p class="small" style="margin-top:10px">This demo does not connect to any real Google account. "Sign in with Google" will simulate a quick signup for demo purposes.</p>
+</div>
+</div>
+
+<div>
+<div class="center-card" style="padding:18px;">
+<h3 style="margin-top:0">About the tool</h3>
+<p class="small">After sign-in you will be taken to a decorative main page with a mandatory disclaimer and 40 structured yes/no questions grouped by domain. At the end, the tool suggests likely diagnoses based on patterns of "Yes" answers.</p>
+<p class="small" style="margin-top:10px">Note: The tool is intentionally lightweight and client-side only — no data leaves your browser in this demo.</p>
+</div>
+</div>
+</div>
+
+<!-- MAIN PAGE (hidden until login) -->
+<div id="mainPage" style="display:none;margin-top:16px">
+<div class="disclaimer">
+<strong>Disclaimer:</strong> This website is only to help PSYCHIATRIC DOCTORS with their diagnosis about patient.
+</div>
+
+<div style="margin-top:12px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+<div>
+<h2 style="margin:6px 0 0 0;color:white">Questionnaire (40 yes / no)</h2>
+<p class="small">Answer each question with a simple Yes or No. The tool will provide suggested diagnoses based on patterns of responses.</p>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<div id="userBadge" style="padding:10px;border-radius:10px;background:linear-gradient(90deg,#ffffff08,#ffffff02)">Signed in as <strong id="userName">Doctor</strong></div>
+<button id="logout" class="reset">Logout</button>
+</div>
+</div>
+
+<form id="quizForm" class="questions" onsubmit="return false;">
+<!-- Questions will be injected here by JS -->
+</form>
+
+<div class="actions">
+<button id="submitBtn" class="submit">Get Diagnosis</button>
+<button id="resetBtn" class="reset">Reset</button>
+</div>
+
+<div id="resultBox" class="result" style="display:none">
+<h3 style="margin:0 0 8px 0;color:white">Suggested diagnosis</h3>
+<div id="diagnosisTags"></div>
+<p class="small" style="margin-top:10px;color:rgba(255,255,255,0.75)"><strong>Automated suggestion:</strong> This is my diagnosis — if you think it may be different, you can go with your method.</p>
+</div>
+
+<footer>
+<p>Built as a decorative demo — always verify clinically.</p>
+</footer>
+</div>
+
+</div>
+</div>
+
+<script>
+/***********************
+ * QUESTIONS DATA
+ ***********************/
+const questions = [
+// Section A: Mood & Emotional Regulation (1-7)
+"Do you frequently experience periods of intensely elevated mood, high energy, and impulsivity that feel different from your usual self?",
+"Do you often feel sad, empty, or hopeless for most of the day, nearly every day?",
+"Do your interest or pleasure in activities you used to enjoy feel significantly diminished?",
+"Do you experience intense, overwhelming mood swings that can change several times in a day or over a few days?",
+"Do you often feel irritable, angry, or \"on edge\" to a degree that feels difficult to control?",
+"Is your anxiety or worry difficult to control and focused on a number of different events or activities?",
+"Do you have a persistent, chronic feeling of emptiness?",
+// Section B: Anxiety & Fear (8-14)
+"Do you avoid social situations or endure them with intense fear due to feelings of being judged or embarrassed?",
+"Do you experience sudden, overwhelming surges of intense fear or discomfort that peak within minutes (panic attacks)?",
+"Do you have specific, irrational fears of objects or situations (e.g., heights, spiders, flying) that you actively avoid?",
+"Do you repeatedly experience unwanted, intrusive thoughts that cause anxiety (obsessions)?",
+"Do you feel driven to perform repetitive behaviors or mental acts in response to an obsession (compulsions)?",
+"Do you have recurring memories, nightmares, or flashbacks of a traumatic event?",
+"Do you often feel tense, restless, or \"keyed up\"?",
+// Section C: Perception of Reality & Thought Patterns (15-19)
+"Have you ever believed something to be true with unshakable conviction, even when presented with strong evidence to the contrary (a delusion)?",
+"Have you ever seen, heard, or felt things that other people cannot see, hear, or feel (hallucinations)?",
+"Do you often believe that casual incidents or external events have a direct and personal meaning specifically for you?",
+"Do you often feel that your thoughts are being controlled by, or broadcast to, an external force?",
+"Do you find it difficult to organize your thoughts or speech, making it hard for others to follow you?",
+// Section D: Self-Image & Relationships (20-26)
+"Do you have a persistently unstable sense of who you are and how you feel about yourself?",
+"Do you have a pattern of intense but unstable relationships, often swinging between idealization and devaluation?",
+"Do you frequently fear real or imagined abandonment and take drastic steps to avoid it?",
+"Do you often feel distrustful and suspicious of other people's motives?",
+"Do you have a grandiose sense of self-importance and believe you are uniquely special?",
+"Do you have an intense need for excessive admiration from others?",
+"Do you lack empathy for the feelings and needs of others?",
+// Section E: Behavior & Impulse Control (27-31)
+"Do you often act impulsively in ways that are self-damaging (e.g., spending, sex, substance abuse, reckless driving)?",
+"Have you ever engaged in deliberate self-harm or had recurrent thoughts of suicide?",
+"Do you struggle with a pattern of deceitfulness, lying, or conning others for personal profit or pleasure?",
+"Do you find it difficult to sustain consistent work behavior or honor financial obligations?",
+"Do you often feel bored and seek out stimulating, and potentially dangerous, situations?",
+// Section F: Focus, Cognition, & Physical Sensations (32-40)
+"Do you often have difficulty sustaining attention in tasks or play activities?",
+"Do you often feel fidgety, \"on the go,\" or as if driven by a motor, and find it difficult to remain still?",
+"Do you have significant memory gaps, particularly surrounding stressful or traumatic events?",
+"Do you at times feel detached from your own mind, body, or surroundings, as if in a dream (derealization/depersonalization)?",
+"Are you excessively concerned with having or acquiring a serious illness, despite medical reassurance?",
+"Do you experience significant distress about your body shape and weight?",
+"Do you engage in recurrent episodes of binge eating?",
+"Do you make inappropriate compensatory behaviors to prevent weight gain, such as self-induced vomiting or misuse of laxatives?",
+"Do you have a persistent difficulty discarding or parting with possessions, regardless of their actual value?"
+];
+
+// Build the questionnaire in the page
+const quizForm = document.getElementById('quizForm');
+
+function createQuestionCard(i, text){
+const wrapper = document.createElement('div');
+wrapper.className = 'q-card';
+const qText = document.createElement('div');
+qText.className = 'q-text';
+qText.innerHTML = `<strong>Q${i+1}.</strong> ${text}`;
+
+const btns = document.createElement('div');
+btns.className = 'btns';
+
+const yes = document.createElement('button');
+yes.type = 'button';
+yes.className = 'yes';
+yes.textContent = 'Yes';
+yes.dataset.q = i;
+yes.addEventListener('click', ()=> setAnswer(i,true,yes,no));
+
+const no = document.createElement('button');
+no.type = 'button';
+no.className = 'no';
+no.textContent = 'No';
+no.dataset.q = i;
+no.addEventListener('click', ()=> setAnswer(i,false,yes,no));
+
+btns.appendChild(yes);
+btns.appendChild(no);
+wrapper.appendChild(qText);
+wrapper.appendChild(btns);
+return wrapper;
+}
+
+// render questions grouped by sections
+function renderQuestions(){
+quizForm.innerHTML = '';
+const sections = [
+{title:'Section A: Mood & Emotional Regulation', range:[0,6]},
+{title:'Section B: Anxiety & Fear', range:[7,13]},
+{title:'Section C: Perception of Reality & Thought Patterns', range:[14,18]},
+{title:'Section D: Self-Image & Relationships', range:[19,25]},
+{title:'Section E: Behavior & Impulse Control', range:[26,30]},
+{title:'Section F: Focus, Cognition, & Physical Sensations', range:[31,39]},
+];
+
+sections.forEach(s=>{
+const h = document.createElement('div');
+h.className='section-title';
+h.textContent = s.title;
+quizForm.appendChild(h);
+for(let i=s.range[0]; i<=s.range[1]; i++){
+quizForm.appendChild(createQuestionCard(i, questions[i]));
+}
+});
+}
+
+// store answers as null / true / false
+const answers = new Array(questions.length).fill(null);
+function setAnswer(index, val, yesBtn, noBtn){
+answers[index] = val;
+// toggle classes
+if(val){ yesBtn.classList.add('active-yes'); noBtn.classList.remove('active-no'); }
+else { noBtn.classList.add('active-no'); yesBtn.classList.remove('active-yes'); }
+}
+// For each diagnosis we list question indices (0-based) strongly associated.
+const diagnosisMap = {
+
+'Bipolar I Disorder':[0,3,4,26],
+'Bipolar II Disorder':[0,1,2,3],
+'Major Depressive Disorder (MDD)':[1,2,5,6],
+'Persistent Depressive Disorder (Dysthymia)':[1,2,6],
+'Cyclothymic Disorder':[0,3,1,2],
+'Disruptive Mood Dysregulation Disorder':[4,3,1],
+
+
+'Generalized Anxiety Disorder (GAD)':[5,13,6],
+'Social Anxiety Disorder (Social Phobia)':[7,5],
+'Panic Disorder':[8,13],
+'Agoraphobia':[8,7],
+'Specific Phobia':[9],
+'Obsessive-Compulsive Disorder (OCD)':[10,11],
+'Post-Traumatic Stress Disorder (PTSD)':[12,13],
+'Body Dysmorphic Disorder':[35],
+
+
+'Schizophrenia':[15,16,18,14],
+'Schizoaffective Disorder':[15,1,16],
+'Schizophreniform Disorder':[15,16],
+'Delusional Disorder':[14],
+'Brief Psychotic Disorder':[15,16],
+
+
+'Borderline Personality Disorder (BPD)':[19,20,21,26],
+'Narcissistic Personality Disorder (NPD)':[23,24,25],
+'Histrionic Personality Disorder (HPD)':[25,20],
+'Antisocial Personality Disorder (ASPD)':[28,29,30],
+
+
+'Paranoid Personality Disorder':[22,14],
+'Schizotypal Personality Disorder':[14,15,16],
+
+
+'Avoidant Personality Disorder':[7,22],
+'Obsessive-Compulsive Personality Disorder (OCPD)':[29,30],
+
+
+'Attention-Deficit/Hyperactivity Disorder (ADHD)':[31,32],
+
+
+'Anorexia Nervosa':[35,36],
+'Bulimia Nervosa':[36,37],
+'Binge-Eating Disorder':[36,37],
+
+
+'Illness Anxiety Disorder':[34],
+'Hoarding Disorder':[39],
+'Somatic Symptom Disorder':[34,5],
+'Dissociative Disorders (Depersonalization/Derealization, etc)':[33,34]
+};
+
+
+const thresholds = {
+default: 1, // at least 1 associated yes suggests inclusion
+mood: 1,
+psychotic: 1,
+personality: 1
+};
+
+function evaluateDiagnoses(){
+const found = [];
+for(const [dx, qIndices] of Object.entries(diagnosisMap)){
+let count=0, total = qIndices.length;
+qIndices.forEach(q=>{ if(answers[q]===true) count++; });
+// simple heuristic: count >= 1 (or >= 30% of mapped items) -> suggest
+if(count>=Math.max(1, Math.ceil(total*0.3))){
+found.push({name:dx,count,matched: qIndices.filter(q=>answers[q]===true)});
+}
+}
+return found.sort((a,b)=>b.count-a.count);
+}
+
+
+document.getElementById('googleBtn').addEventListener('click', ()=>{
+// simulated quick signup
+const name = prompt('Simulated Google sign-in: enter your display name for the demo','Dr. Smith');
+if(name){ startMain(name); }
+});
+document.getElementById('nameBtn').addEventListener('click', ()=>{
+document.getElementById('nameForm').style.display='block';
+});
+document.getElementById('cancelCreate').addEventListener('click', ()=>{
+document.getElementById('nameForm').style.display='none';
+});
+document.getElementById('createAccount').addEventListener('click', ()=>{
+const name = document.getElementById('displayName').value.trim() || 'Doctor';
+startMain(name);
+});
+
+document.getElementById('logout').addEventListener('click', ()=>{
+document.getElementById('mainPage').style.display='none';
+document.getElementById('loginView').style.display='block';
+document.getElementById('userName').textContent='Doctor';
+// reset answers
+for(let i=0;i<answers.length;i++) answers[i]=null;
+renderQuestions();
+document.getElementById('resultBox').style.display='none';
+});
+
+function startMain(name){
+document.getElementById('loginView').style.display='none';
+document.getElementById('mainPage').style.display='block';
+document.getElementById('userName').textContent = name;
+renderQuestions();
+}
+
+document.getElementById('submitBtn').addEventListener('click', ()=>{
+// ensure all answered? we'll allow partial answers but warn
+const unanswered = answers.reduce((acc,val,idx)=> val===null ? acc.concat(idx+1) : acc, []);
+if(unanswered.length>0){
+const proceed = confirm('There are ' + unanswered.length + ' unanswered questions. Do you want to continue with partial responses?');
+if(!proceed) return;
+}
+
+const results = evaluateDiagnoses();
+const diagBox = document.getElementById('diagnosisTags');
+diagBox.innerHTML='';
+if(results.length===0){
+diagBox.innerHTML = '<div class="tag">No diagnosis suggested</div>';
+} else {
+results.forEach(r=>{
+const el = document.createElement('div');
+el.className='tag';
+el.textContent = r.name + (r.count?(' ('+r.count+' matched)') : '');
+diagBox.appendChild(el);
+});
+}
+document.getElementById('resultBox').style.display='block';
+// scroll to result
+document.getElementById('resultBox').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+if(!confirm('Reset all answers?')) return;
+for(let i=0;i<answers.length;i++) answers[i]=null;
+renderQuestions();
+document.getElementById('resultBox').style.display='none';
+});
+
+// initial render for login screen
+renderQuestions();
+</script>
+</body>
+</html>
